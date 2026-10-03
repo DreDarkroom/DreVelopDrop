@@ -11,11 +11,11 @@
 </head>
 <body class="studio lit">
   <header id="sbar">
-    <a class="btnlink" href="index.html" title="Back to the instrument">← instrument</a>
+    <a class="btnlink" href="index.html" title="Back to the instrument">← play</a>
     <b>DreVelopDrop <i>//</i> Studio</b>
     <span class="grow"></span>
     <span id="usage" title="How much of this browser's storage the Studio uses"></span>
-    <button id="keep" type="button" title="Ask the browser not to clear your recordings when it runs low on space">keep my data</button>
+    <button id="keep" type="button" title="Ask the browser not to clear your recordings when it runs low on space">keep</button>
     <button id="import" type="button" title="Add a performance (.sqz) or a video (.webm, .mp4) from your computer">import…</button>
     <input id="importfile" type="file" accept=".sqz,.json,.webm,.mp4,.mkv,.wav,.mp3,application/json,video/*,audio/*" multiple hidden>
   </header>
@@ -64,7 +64,7 @@
         <div id="readout" class="fine" aria-live="polite">Click an event to see it. Drag to select a range. Delete removes. Ctrl + wheel zooms.</div>
         <div class="toolrow" id="edit3">
           <span class="grp"><button id="save" type="button" title="Keep these edits (replaces this take)">save</button><button id="saveas" type="button" title="Keep these edits as a new take">save as copy</button></span>
-          <span class="grp"><button id="export" type="button">download .sqz</button><button id="wav" type="button" title="Render the sound to a 24-bit WAV, faster than real time. No sound is played.">render WAV</button><button id="vid" type="button" title="Replay it and record the picture and sound as a WebM (in real time)">record as video</button></span>
+          <span class="grp"><button id="export" type="button">download .sqz</button><button id="wav" type="button" title="Render the sound to a 24-bit WAV, faster than real time. No sound is played.">render WAV</button><button id="stems" type="button" title="Render kick, snare, hats, bass and effects as separate WAVs in one zip">render stems</button><button id="vid" type="button" title="Replay it and record the picture and sound as a WebM (in real time)">record as video</button></span>
           <span class="grp"><button id="delete" type="button" class="danger">delete take</button></span>
           <span id="pstatus" class="fine"></span>
         </div>

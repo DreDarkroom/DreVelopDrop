@@ -151,3 +151,26 @@ test('a control name always gives the same shape and colour', () => {
 test('the library is only available in a browser, and says so without crashing the page', async () => {
   await assert.rejects(library.list(), /indexedDB|not defined/i);
 });
+
+/* ---------------- zip ---------------- */
+import { crc32, zip } from '../src/rec/zip.js';
+
+test('crc32 matches the standard check value', () => {
+  assert.equal(crc32(new TextEncoder().encode('123456789')), 0xcbf43926);
+  assert.equal(crc32(new Uint8Array(0)), 0);
+});
+
+test('a zip has the right structure: local headers, names, data, a central directory and an end record', () => {
+  const a = new TextEncoder().encode('hello'), b = new Uint8Array([1, 2, 3, 4, 5, 6]);
+  const z = zip([{ name: 'a.txt', data: a }, { name: 'dir/é.wav', data: b }], new Date(2026, 9, 3, 12, 0, 0)), v = new DataView(z.buffer);
+  assert.equal(v.getUint32(0, true), 0x04034b50, 'first local header');
+  assert.equal(v.getUint32(14, true), crc32(a), 'its crc');
+  assert.equal(v.getUint32(18, true), 5);
+  assert.equal(new TextDecoder().decode(z.slice(30, 35)), 'a.txt');
+  assert.equal(new TextDecoder().decode(z.slice(35, 40)), 'hello', 'the data is stored as it is');
+  const end = z.length - 22;
+  assert.equal(v.getUint32(end, true), 0x06054b50, 'end of central directory');
+  assert.equal(v.getUint16(end + 10, true), 2, 'two entries');
+  const centralAt = v.getUint32(end + 16, true);
+  assert.equal(v.getUint32(centralAt, true), 0x02014b50, 'the central directory is where the end record says');
+});

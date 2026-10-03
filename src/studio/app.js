@@ -13,7 +13,7 @@ import { library } from '../rec/library.js';
 import { toast } from '../ui/dom.js';
 import { createTimeline, describe } from './timeline.js';
 import * as ed from './edit.js';
-import { renderWav } from './render.js';
+import { renderWav, renderStems } from './render.js';
 import { buildVideo } from './video.js';
 
 const GLYPH = { performance: '◇', video: '▶', audio: '♪' };
@@ -214,6 +214,16 @@ export function start() {
       const t0 = performance.now(), r = await renderWav(docNow(), { onStatus: status });
       download(new Blob([r.bytes], { type: 'audio/wav' }), `${baseName()}.wav`);
       toast(`Rendered ${fmtTime(r.seconds)} of sound in ${((performance.now() - t0) / 1000).toFixed(1)} s.`);
+    } catch (err) { toast(`Could not render: ${err.message}`, 6000); }
+    b.disabled = false; status('');
+  });
+  $('#stems').addEventListener('click', async () => {
+    const b = $('#stems');
+    b.disabled = true;
+    try {
+      const t0 = performance.now(), bytes = await renderStems(docNow(), { onStatus: status, name: baseName() });
+      download(new Blob([bytes], { type: 'application/zip' }), `${baseName()}-stems.zip`);
+      toast(`Rendered the parts in ${((performance.now() - t0) / 1000).toFixed(1)} s.`);
     } catch (err) { toast(`Could not render: ${err.message}`, 6000); }
     b.disabled = false; status('');
   });

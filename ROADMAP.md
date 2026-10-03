@@ -8,7 +8,7 @@ A living list. Everything from DevelopDrop's own roadmap that is still open carr
 - **Trippy buttons** and **presses that feed the picture**, recorded in performances.
 - **The wet squeegee** (drips, a squishing blade), an **ink** scene and an *Ink Cloud* style.
 - **Developer mode** with live numbers, switches and a benchmark.
-- **The Studio**: a library of takes, a timeline editor for performances, offline WAV render, video recording of a replay, a video trimmer.
+- **The Studio**: a library of takes, a timeline editor for performances, offline WAV render and stems (one zip), video recording of a replay, a video trimmer.
 
 ## Next: the Studio
 
@@ -17,7 +17,6 @@ A living list. Everything from DevelopDrop's own roadmap that is still open carr
 - **Several takes on one timeline:** line a performance up against a video of it, or against a second performance, and render the lot.
 - **A take is a link:** share a performance (a few KB) as a URL fragment that opens in the Studio.
 - **Render a performance to video faster than real time** (an offline picture and an offline sound, muxed), not only in real time.
-- **Stems:** render kick, snare, hats and bass to separate WAVs.
 - Waveform and loudness on the timeline for rendered audio; markers and regions with names.
 
 ## Next: the picture

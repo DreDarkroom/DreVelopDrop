@@ -4,10 +4,15 @@
 import { createAudio } from '../engine/audio.js';
 import { C } from '../perf/format.js';
 import { wavFile } from '../rec/wav.js';
+import { zip } from '../rec/zip.js';
 
 const SR = 48000, LEAD = 0.1, TAIL = 3, QUANTUM = 128 / SR;
 
-export async function renderWav(doc, { onStatus } = {}) {
+/** The sounds a stem can hold. Everything else (knob moves, filter sweeps, silences, picture changes) is kept in every stem, so each one sounds as it did in the mix. */
+export const STEMS = { kick: [C.kick], snare: [C.snare], hats: [C.hat], bass: [C.noteOn, C.noteOff], fx: [C.impact, C.riser, C.squeak] };
+const SOUNDS = new Set(Object.values(STEMS).flat());
+
+export async function renderWav(doc, { onStatus, stem } = {}) {
   const A = createAudio({ oversample: '4x', roomSeconds: 2.8 }), secs = doc.duration + TAIL + LEAD;
   const ctx = new OfflineAudioContext(2, Math.ceil(SR * secs), SR);
   A.attach(ctx);
@@ -18,6 +23,7 @@ export async function renderWav(doc, { onStatus } = {}) {
   const drive = new Map();                                      // quantised time -> last value (a drag makes hundreds of these)
   const at = (t) => LEAD + t;
   for (const e of doc.events) {
+    if (stem && SOUNDS.has(e.code) && !STEMS[stem].includes(e.code)) continue;      // this stem leaves that sound out
     const t = at(e.t), a = e.a;
     switch (e.code) {
       case C.noteOn: A.noteOn(t, a[0], a[1], !!a[2], a[3]); break;
@@ -44,4 +50,17 @@ export async function renderWav(doc, { onStatus } = {}) {
   if (onStatus) onStatus(`rendering ${Math.round(doc.duration)} s${n ? ` (${n} drive changes)` : ''}…`);
   const buf = await ctx.startRendering();
   return { bytes: wavFile(SR, buf.getChannelData(0), buf.getChannelData(1)), seconds: buf.duration, nodes: A.stats.nodes };
+}
+
+/** Render each part on its own (kick, snare, hats, bass, fx) and return them as one zip file. The stems do not add up to the mix exactly: the compressors act on each alone. */
+export async function renderStems(doc, { onStatus, name = 'take' } = {}) {
+  const files = [];
+  for (const stem of Object.keys(STEMS)) {
+    if (!doc.events.some((e) => STEMS[stem].includes(e.code))) continue;           // nothing of that kind in this take
+    if (onStatus) onStatus(`rendering ${stem}…`);
+    const r = await renderWav(doc, { stem });
+    files.push({ name: `${name}-${stem}.wav`, data: r.bytes });
+  }
+  if (!files.length) throw new Error('there are no notes or hits to render');
+  return zip(files);
 }

@@ -26,6 +26,7 @@ few seconds, and the tunnel leans toward where you pressed. The same press is wr
   picture changes, presses, squeegee strokes, knob moves): drag a box to select, move (snapped to the beat), delete, duplicate, quantise, transpose, softer / harder,
   crop to a selection, cut a range, insert a picture or light change at the playhead, undo and redo. Save over the take or as a copy, download the `.sqz`.
 - **Render to WAV**, faster than real time (about 12 times on the author's laptop), with no sound played: the same engine into an offline context, at its best quality.
+- **Render stems**: kick, snare, hats, bass and effects as separate 24-bit WAVs in one zip (about 3 seconds for a 9-second take). They do not add up to the mix exactly, because the compressors act on each part alone.
 - **Record as video**: replay a take and capture the picture and sound as a WebM.
 - **Videos** are played, trimmed (mark a start and an end, save the kept part as a new take: the browser cannot cut a file without re-encoding, so it plays and re-records the part, in real time),
   and a frame can be saved as a PNG.
@@ -113,7 +114,7 @@ Options for streaming and testing: `?clean=1` (no panel, for OBS), `?autostart=1
 node --test tests/logic.test.js tests/music.test.js tests/midi.test.js tests/studio.test.js
 ```
 
-65 tests. The first 49 are DevelopDrop's own, ported (the sequencer runs for real with the audio engine replaced by a recorder); the rest cover the Studio's editing, presses in the file format, version-1 files and the kaleidoscope folding.
+67 tests. The first 49 are DevelopDrop's own, ported (the sequencer runs for real with the audio engine replaced by a recorder); the rest cover the Studio's editing, presses in the file format, version-1 files and the kaleidoscope folding.
 
 ## Layout
 
@@ -122,7 +123,7 @@ index.html, studio.html        the two pages
 src/engine/                    audio.js (factory), seq.js, styles.js, kits.js, loopfile.js, clock.js
 src/perf/                      format.js (the .sqz file, pure), playback.js
 src/visual/                    engine.js, scenes.js, press.js
-src/rec/                       recorder.js, library.js (IndexedDB), wav.js
+src/rec/                       recorder.js, library.js (IndexedDB), wav.js, zip.js
 src/ui/                        the instrument page, one concern per file
 src/studio/                    the Studio: app, timeline, edit (pure), render (offline WAV), video
 src/dev/devtools.js            developer mode and the benchmark
