@@ -1,0 +1,62 @@
+/* DreVelopDrop Studio. Shares the instrument's look (css/style.css): the same red-light palette, buttons and trippy hover. */
+body.studio { text-transform: none; letter-spacing: 0.02em; font-size: 12px; }
+body.studio::after { display: none; }
+#sbar { position: fixed; z-index: 5; top: 0; left: 0; right: 0; height: 44px; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: rgba(5, 0, 0, 0.85); border-bottom: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.14em; font-size: 11px; }
+#sbar i { font-style: normal; color: var(--dim); }
+#sbar .grow { flex: 1; }
+#usage { color: var(--dim); font-size: 10px; text-transform: none; letter-spacing: 0.04em; }
+#sbar button, .toolrow button, .toolrow select, .transport button, .titlebar input, .notes textarea, .btnlink {
+  background: rgba(5, 0, 0, 0.9); color: inherit; font: inherit; letter-spacing: 0.04em; text-transform: none; border: 1px solid var(--line); border-radius: 4px; height: 26px; padding: 0 9px;
+}
+.toolrow button:hover, #sbar button:hover, .transport button:hover { border-color: var(--tint); background: rgba(var(--tint-rgb), 0.14); }
+.toolrow button:disabled, #sbar button:disabled { opacity: 0.4; cursor: default; }
+button.danger:hover { border-color: #ff3a2a; background: rgba(255, 40, 30, 0.25); }
+#shell { position: fixed; top: 44px; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 290px minmax(0, 1fr); }
+#lib { overflow: auto; border-right: 1px solid var(--line); padding: 12px; background: rgba(5, 0, 0, 0.5); }
+#takes { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.take { display: grid; grid-template-columns: 22px 1fr; gap: 2px 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; background: rgba(var(--tint-rgb), 0.04); }
+.take:hover, .take:focus-visible { border-color: var(--tint); }
+.take[aria-selected="true"] { border-color: var(--tint); background: rgba(var(--tint-rgb), 0.16); }
+.take .ic { grid-row: span 2; align-self: center; font-size: 16px; text-align: center; color: var(--tint); }
+.take b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.take small { color: var(--dim); font-size: 10px; }
+#work { overflow: auto; padding: 14px 18px 40px; }
+#work h2 { margin: 6px 0 8px; font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); font-weight: 400; }
+#work p { max-width: 70ch; }
+.fine { color: var(--dim); font-size: 11px; }
+.titlebar { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.titlebar input { flex: 1; max-width: 460px; font-weight: 600; }
+#stagewrap { position: relative; width: 100%; max-width: 980px; aspect-ratio: 16 / 7; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #000; }
+#pic { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#gate { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, 0.45); }
+#gate[hidden] { display: none; }
+#gate button { height: 44px; padding: 0 22px; font: inherit; border: 1px solid var(--tint); border-radius: 22px; background: rgba(var(--tint-rgb), 0.2); color: #fff; }
+.transport { display: flex; align-items: center; gap: 12px; margin: 8px 0; max-width: 980px; }
+.transport input[type="range"] { flex: 1; }
+#ttime { font-variant-numeric: tabular-nums; color: var(--dim); min-width: 13ch; text-align: right; }
+.toolrow { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: 8px 0; }
+.toolrow .grp { display: inline-flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.tick { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+.tick input { accent-color: var(--tint); }
+#tl { display: block; width: 100%; max-width: 1400px; border: 1px solid var(--line); border-radius: 8px; outline: none; touch-action: none; cursor: crosshair; }
+#tl:focus-visible { border-color: var(--tint); }
+#readout { min-height: 1.6em; margin: 6px 0; }
+.notes { display: grid; gap: 4px; max-width: 700px; margin-top: 10px; }
+.notes textarea { height: auto; padding: 6px 9px; resize: vertical; }
+.vwrap { max-width: 980px; background: #000; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.vwrap video { display: block; width: 100%; max-height: 60vh; }
+.trim { max-width: 980px; margin-top: 10px; }
+.trimbar { position: relative; height: 26px; }
+.trimbar #trimsel { position: absolute; top: 11px; height: 4px; background: var(--tint); border-radius: 2px; box-shadow: 0 0 8px var(--tint); pointer-events: none; }
+.trimbar input[type="range"] { position: absolute; left: 0; right: 0; top: 0; width: 100%; pointer-events: none; }
+.trimbar input[type="range"]::-webkit-slider-thumb { pointer-events: auto; }
+.trimbar input[type="range"]::-moz-range-thumb { pointer-events: auto; }
+.trimbar input[type="range"]::-webkit-slider-runnable-track { background: transparent; }
+.trimbar input[type="range"]::-moz-range-track { background: transparent; }
+#empty { max-width: 640px; padding-top: 30px; }
+@media (max-width: 760px) {
+  #shell { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
+  #lib { max-height: 32vh; border-right: 0; border-bottom: 1px solid var(--line); }
+  #sbar { gap: 8px; padding: 0 10px; }
+  #usage { display: none; }
+}

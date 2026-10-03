@@ -1,0 +1,46 @@
+<!doctype html><meta charset="utf-8"><title>DreVelopDrop picture benchmark: original against new</title>
+<style>body{margin:0;background:#111;color:#ddd;font:12px monospace}iframe{width:1280px;height:720px;border:0;display:block}</style>
+<iframe id="o" src="orig/index.html?ab=1"></iframe>
+<iframe id="n" src="../../index.html?ab=1"></iframe>
+<script>
+window.ab = async function (pairs, frames, scene, folds) {
+  const O = document.getElementById('o').contentWindow, N = document.getElementById('n').contentWindow;
+  const a = [], b = [];
+  O.SS.visual.bench(3, scene, folds); N.__dd.V.bench(3, scene, folds);
+  for (let i = 0; i < pairs; i++) { a.push(O.SS.visual.bench(frames, scene, folds).ms); b.push(N.__dd.V.bench(frames, scene, folds).ms); }
+  const med = (x) => x.slice().sort((p, q) => p - q)[x.length >> 1];
+  return { orig: med(a), neu: med(b), ratio: +(med(b) / med(a)).toFixed(3), a, b, size: [O.innerWidth, O.innerHeight, N.innerWidth, N.innerHeight] };
+};
+</script>
+<script>
+/* Deterministic cost model: count what each version submits to the canvas per frame, independent of how busy the machine is.
+   passes   = full-screen-sized fills and image draws on the screen-sized canvases (excluding the kaleidoscope wedges, which tile one screen between them)
+   wedgePx  = source pixels the kaleidoscope hands to the canvas per frame (drawImage of the scene canvas)
+   calls    = every 2D draw call on any canvas */
+window.countFrames = function (win, run, frames) {
+  const P = win.CanvasRenderingContext2D.prototype, saved = {};
+  const st = { passes: 0, wedgePx: 0, calls: 0, sceneCalls: 0 };
+  const det = (ctx) => { const m = ctx.getTransform(); return Math.abs(m.a * m.d - m.b * m.c); };
+  const note = (ctx, w, h, isScene) => {
+    if (isScene) { st.sceneCalls++; return; }
+    const cw = ctx.canvas.width * ctx.canvas.height;
+    if (w * h * det(ctx) >= 0.5 * cw) st.passes++;
+  };
+  const wrap = (name, fn) => { saved[name] = P[name]; P[name] = function (...a) { st.calls++; fn(this, a); return saved[name].apply(this, a); }; };
+  wrap('fillRect', (c, a) => note(c, a[2], a[3], c.canvas.width === 1024 && c.canvas.height === 1024));
+  wrap('drawImage', (c, a) => {
+    const src = a[0], sw = a[0].width, sh = a[0].height, isScene = c.canvas.width === 1024 && c.canvas.height === 1024;
+    const w = a.length >= 5 ? a[a.length === 9 ? 7 : 3] : sw, h = a.length >= 5 ? a[a.length === 9 ? 8 : 4] : sh;
+    if (src.width === 1024 && src.height === 1024 && !isScene) { st.wedgePx += (a.length === 9 ? a[3] * a[4] : sw * sh); return; }   // the scene being folded in
+    note(c, w, h, isScene);
+  });
+  for (const n of ['fill', 'stroke', 'strokeRect', 'clearRect', 'fillText']) { saved[n] = P[n]; P[n] = function (...a) { st.calls++; return saved[n].apply(this, a); }; }
+  try { run(frames); } finally { for (const n in saved) P[n] = saved[n]; }
+  return { passes: +(st.passes / frames).toFixed(2), wedgeMpx: +(st.wedgePx / frames / 1e6).toFixed(2), callsPerFrame: Math.round(st.calls / frames), sceneCanvasCalls: Math.round(st.sceneCalls / frames) };
+};
+window.countAB = function (scene, folds) {
+  const O = document.getElementById('o').contentWindow, N = document.getElementById('n').contentWindow;
+  const o = window.countFrames(O, (n) => O.SS.visual.bench(n, scene, folds), 24), n = window.countFrames(N, (k) => N.__dd.V.bench(k, scene, folds), 24);
+  return { orig: o, neu: n };
+};
+</script>

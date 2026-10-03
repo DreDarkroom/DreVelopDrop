@@ -1,0 +1,27 @@
+<!doctype html><meta charset="utf-8"><title>DreVelopDrop sound benchmark: original against new</title>
+<body style="background:#111;color:#ddd;font:12px monospace"><pre id="out">ready</pre>
+<script type="module">
+import { benchAudio } from '../../src/dev/devtools.js';
+const loadFrame = (src) => new Promise((res) => { const f = document.createElement('iframe'); f.style.cssText = 'width:300px;height:200px;border:0'; f.onload = () => res(f); f.src = src; document.body.append(f); });
+async function benchOrig(styleIndex, bars) {
+  const f = await loadFrame('orig/index.html?audio=1'), w = f.contentWindow, SS = w.SS;
+  const sr = 48000, tempo = SS.seq.styles[styleIndex].tempo, sd = 60 / tempo / 4, secs = bars * 16 * sd + 1.2;
+  let off; w.AudioContext = function () { off = new w.OfflineAudioContext(2, Math.ceil(sr * secs), sr); return off; };
+  try { await SS.audio.init(); } catch (e) { /* an offline context cannot be resumed: fine */ }
+  SS.seq.applyStyle(styleIndex, { now: true });
+  for (let tk = 0; tk < bars * 16; tk++) SS.seq.tickOnce(tk, 0.05 + tk * sd);
+  const t0 = performance.now();
+  await off.startRendering();
+  const ms = performance.now() - t0;
+  f.remove();
+  return ms;
+}
+window.audioAB = async (styleIndex, rounds = 5, bars = 8) => {
+  const a = [], b = [];
+  await benchAudio({ styleIndex, bars, runs: 1 });
+  for (let i = 0; i < rounds; i++) { a.push(await benchOrig(styleIndex, bars)); b.push((await benchAudio({ styleIndex, bars, runs: 1 })).ms); }
+  const med = (x) => x.slice().sort((p, q) => p - q)[x.length >> 1];
+  return { style: styleIndex, orig: +med(a).toFixed(1), neu: +med(b).toFixed(1), ratio: +(med(b) / med(a)).toFixed(3), a: a.map((x) => +x.toFixed(0)), b: b.map((x) => +x.toFixed(0)) };
+};
+document.getElementById('out').textContent = 'loaded';
+</script>

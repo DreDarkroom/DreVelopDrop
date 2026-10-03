@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>DreVelopDrop</title>
+  <meta name="description" content="DreVelopDrop: a small wet instrument for SafeLight. Wipe the fog, build, drop. DreDarkroom, SafeLight and SquidgySqueegee are DJ aliases.">
+  <link rel="stylesheet" href="css/style.css?v=0.1.0">
+</head>
+<body>
+  <canvas id="stage" role="img" aria-label="Fog over a kaleidoscope. Drag to wipe it clear. Hold the right button to build, let go to drop."></canvas>
+
+  <header id="mast">
+    <span><b id="dre">DreDarkroom</b> <i>//</i> SafeLight <i>//</i> <b>SquidgySqueegee</b> <i>//</i> DreVelopDrop</span>
+    <small>DreDarkroom, SafeLight, SquidgySqueegee: DJ aliases</small>
+  </header>
+
+  <button id="setbtn" type="button" aria-label="Settings" aria-expanded="false" aria-controls="settings" title="Settings">⚙</button>
+  <button id="helpbtn" type="button" aria-label="How to play" aria-expanded="false" aria-controls="help">?</button>
+
+  <button id="switch" type="button" aria-label="Turn on the safelight">
+    <span class="bulb"></span>
+    <span class="cap">Turn on the safelight</span>
+  </button>
+
+  <p id="hint">space&nbsp;build + drop · right-click&nbsp;menu · wheel&nbsp;level · z x v b&nbsp;mute · n&nbsp;clear · ; '&nbsp;style · ?&nbsp;help</p>
+  <div id="battery" hidden role="img" aria-label="Battery"></div>
+  <div id="clock" aria-live="off" title="Time since the music started"></div>
+  <p id="armed" hidden></p>
+
+  <section id="help" hidden role="dialog" aria-label="How to play">
+    <button id="helpclose" type="button" aria-label="Close help">×</button>
+    <h2>How to play</h2>
+    <dl>
+      <dt>Play</dt>
+      <dd><b>a w s e d f t g y h u j k o l p</b> are a keyboard (a row of piano). <b>Drag on the picture</b> to squeegee the fog: it smears, squeaks, opens the filter, and, being wet, drips. <b>1 2 3</b> change the light (and the mode).</dd>
+      <dt>Every press feeds the picture</dt>
+      <dd>Press anywhere, on the picture or on any button, and a ring and a glyph bloom where you pressed, folded into the kaleidoscope. The presses are remembered: they stir what the picture generates next, make it busier for a while, and lean the tunnel toward where you pressed. <b>Settings ⚙ → Trippy buttons</b> turns it down or up (0 is off). Recordings keep your presses, so a replay builds the same picture.</dd>
+      <dt>Build and drop</dt>
+      <dd>Hold <b>space</b> (or the right mouse button, or the <b>build</b> button) and the music thins out and climbs. Let go and the drop lands on the next beat. <b>Shift + space</b> builds the other way: the mix sinks under water. <b>Quantise</b> decides when the drop lands (now, the next beat, the next bar). Build slowly and quietly: there is no rush.</dd>
+      <dt>Balance and menus</dt>
+      <dd>Put the mouse over the bass grid or a drummer and use the <b>wheel</b> to trim its level in quarter-decibel steps (hold <b>Shift</b> for 1 dB, <b>Alt</b> for 0.05 dB). The wheel over any slider nudges it just as finely. <b>Right-click</b> the bass grid or a drummer for a menu: mute, solo, clear, a new pattern, shift or turn it, key up and down, a clip, reset level.</dd>
+      <dt>Phones, battery and fullscreen</dt>
+      <dd><b>eco</b> is a battery saver: a smaller picture at 30 frames a second, no reverb room and simpler hats, so a phone stays cooler. It starts on for phones, and turns on by itself when the battery is low. <b>full</b> (or <b>Shift + F</b>) goes fullscreen on any device and shows a quiet clock of the time since the music started; click it to see the time of day instead.</dd>
+      <dt>Touch and pen</dt>
+      <dd><b>One finger</b> squeegees; <b>two fingers held</b> build and letting go drops; <b>three</b> build the other way; <b>double-tap</b> the picture to hide or show the panel. A pen's pressure sets the blade, its barrel button builds, and a resting palm is ignored. On a phone the first tap also goes fullscreen, and <b>more ▴</b> opens the rest of the controls.</dd>
+      <dt>Shape a loop</dt>
+      <dd>Click the grid to write the bass line. Click dots on the rings to change the three drummers; <b>− +</b> change hits, <b>‹ ›</b> change loop length. <b>n</b> clears the bass line, <b>Shift + n</b> the drums. <b>z x v b</b> mute kick, snare, hats and bass. <b>Drift</b> lets it wander around your loop: 0 keeps it exactly as written.</dd>
+      <dt>Styles</dt>
+      <dd>The <b>style</b> menu (or <b>;</b> and <b>'</b>) swaps in a whole starting point: tempo, drum kit, patterns, sound and picture. Changes land on the next bar. <b>Slow Build</b> starts with just a kick and hats; <b>Ink Cloud</b> is wet and wobbly.</dd>
+      <dt>Tempo</dt>
+      <dd>The slider moves in tenths. <b>dnb</b> (or <b>\</b>) switches it to the drum and bass range up to 180. <b>[ ]</b> nudge by 1, <b>{ }</b> by 0.1.</dd>
+      <dt>Clips, loops and recordings</dt>
+      <dd><b>● drums</b> / <b>● bass</b> (or <b>r</b>) record 1 to 8 bars from the next bar and loop them. Drag a saved clip, a loop .json or a performance .sqz onto the page and it snaps in on the next bar (recordings take over the page until you press back to live).</dd>
+      <dt>Journey</dt>
+      <dd><b>journey</b> (or <b>i</b>) slowly raises the tempo while the picture changes and thickens, over as many bars as you choose.</dd>
+      <dt>Keep a loop</dt>
+      <dd><b>save loop</b> stores it in this browser. <b>↺ saved loop</b> puts the bass line back. <b>files</b> exports or imports loops as small .json files.</dd>
+      <dt>Show</dt>
+      <dd><b>`</b> (backtick) hides the panel. <b>c</b> goes fullscreen with nothing but the picture. <b>q</b> changes picture quality. Right-clicks are yours: no browser menu gets in the way of a screen recording. Add <b>?clean=1</b> to the address for OBS.</dd>
+      <dt>Record, and the Studio</dt>
+      <dd>Pick a format, press <b>● rec</b>. Performances and videos are kept in this browser, in the <b>Studio</b> (nothing is uploaded): play them back, trim a video, and edit a performance note by note. Untick <b>Studio</b> to save a file instead. <b>WAV</b> (lossless) and <b>MP3</b> (320 kbps) are always files. <b>snap</b> saves a still.</dd>
+      <dt>MIDI</dt>
+      <dd><b>midi</b> (or <b>m</b>) connects a controller: learn any button or knob, or run the quick map. Needs Chrome or Edge.</dd>
+      <dt>Developer mode</dt>
+      <dd>Settings ⚙ → Developer mode (or <b>Shift + D</b>, or <b>?dev=1</b>) shows live numbers, switches that turn one costly part off at a time, a benchmark, and a log.</dd>
+      <dt>Hidden</dt>
+      <dd>Some things are not on any button. Try <b>0</b>.</dd>
+    </dl>
+    <p class="fine">
+      <a href="studio.html">Studio</a>
+      <a id="roadmap" href="https://github.com/DreDarkroom/DreVelopDrop/blob/main/ROADMAP.md" rel="noopener">Roadmap</a>
+      <a href="https://github.com/DreDarkroom/DreVelopDrop" rel="noopener">Source</a>
+    </p>
+    <p class="fine">Version <span id="ver"></span>. Grown from DevelopDrop. DreDarkroom, SafeLight and SquidgySqueegee are DJ aliases. MP3 encoding by <a href="https://lame.sourceforge.net">LAME</a> (lamejs, LGPL).</p>
+  </section>
+
+  <section id="settings" hidden role="dialog" aria-label="Settings"></section>
+  <section id="devpanel" hidden role="dialog" aria-label="Developer mode"></section>
+  <section id="midipanel" hidden role="dialog" aria-label="MIDI controller"></section>
+  <section id="journeypop" hidden role="dialog" aria-label="Journey"></section>
+
+  <div id="notice" role="alert" hidden></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="dropzone" hidden><p>Drop a recording, a loop or a clip</p></div>
+
+  <div id="pbar" hidden>
+    <button id="pplay" type="button" aria-label="Play">▶</button>
+    <input id="pseek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Position">
+    <span id="ptime">00:00 / 00:00</span>
+    <button id="pclose" type="button" title="Leave the recording and play live again">back to live</button>
+  </div>
+
+  <main id="panel" aria-label="Instrument">
+    <button id="sheet" type="button" aria-expanded="true" aria-controls="panel" title="Show or hide the rest of the controls">less ▾</button>
+    <section id="drummers" aria-label="Three drummers"></section>
+    <section id="synth" aria-label="Bass">
+      <div id="roll" role="group" aria-label="Bass steps"></div>
+      <div id="knobs"></div>
+    </section>
+    <section id="light" aria-label="Light and time">
+      <div id="bulbs"></div>
+      <label class="knob" id="stylewrap"><span>Style<small>a whole starting point</small></span>
+        <select id="style" aria-label="Style"></select>
+      </label>
+      <div id="tempo"></div>
+    </section>
+
+    <div id="tools">
+      <div class="group" aria-label="Loop">
+        <button id="save" type="button" title="Save this loop in this browser. It comes back next time you open the page.">save loop</button>
+        <button id="revert" type="button" title="Put the bass line back to the loop you saved (undoes Drift)">↺ saved loop</button>
+        <button id="clearbass" type="button" title="Empty the bass line (n)">clear bass</button>
+        <button id="cleardrums" type="button" title="Empty the three drummers (Shift + n)">clear drums</button>
+        <span class="menuwrap">
+          <button id="files" type="button" aria-haspopup="menu" aria-expanded="false" title="Export or import loops as files">files ▾</button>
+          <div id="filesmenu" role="menu" hidden></div>
+        </span>
+        <input id="pick" type="file" accept=".json,.sqz,application/json,application/octet-stream" hidden>
+      </div>
+      <div class="group quick" aria-label="Mute" id="mutes"></div>
+      <div class="group" aria-label="Clips">
+        <select id="clipbars" aria-label="Clip length in bars" title="How many bars a clip records">
+          <option value="1">1 bar</option><option value="2">2 bars</option><option value="4" selected>4 bars</option><option value="8">8 bars</option>
+        </select>
+        <button id="clipdrums" type="button" title="Record the drums for this many bars, from the next bar, then loop them">● drums</button>
+        <button id="clipbass" type="button" title="Record the bass for this many bars, from the next bar, then loop it">● bass</button>
+        <span id="clips"></span>
+      </div>
+      <div class="group quick" aria-label="Perform">
+        <button id="build" type="button" title="Hold to build, let go to drop (same as space). Right-hold builds the other way.">build ▸ drop</button>
+        <select id="quant" aria-label="Quantise" title="When the drop lands">
+          <option value="beat">on the beat</option><option value="bar">on the bar</option><option value="now">tight (16th)</option>
+        </select>
+        <button id="journey" type="button" aria-haspopup="dialog" title="Slowly raise the tempo and progress the picture (i)">journey</button>
+        <button id="midi" type="button" aria-haspopup="dialog" title="Connect a MIDI controller (m)">midi</button>
+      </div>
+      <div class="group" aria-label="Record">
+        <select id="recfmt" aria-label="Recording format"></select>
+        <select id="recq" aria-label="Video size" title="How much detail a video keeps">
+          <option value="3000000">lean</option><option value="6000000">sharp</option><option value="12000000">full</option>
+        </select>
+        <label class="tick" title="Keep it in the Studio (in this browser). Untick to save a file instead."><input id="recdest" type="checkbox" checked> Studio</label>
+        <button id="rec" type="button" aria-pressed="false">● rec</button>
+        <span id="recinfo" aria-live="off"></span>
+        <button id="snap" type="button" title="Save a picture of what is on screen">snap</button>
+        <a id="studiolink" class="btnlink" href="studio.html" title="Play back, trim and edit what you recorded">Studio</a>
+      </div>
+      <div class="group quick" aria-label="View">
+        <button id="full" type="button" aria-pressed="false" title="Fullscreen, with a small clock of the time since the music started (Shift + F). The first tap on a phone does this for you.">full</button>
+        <button id="eco" type="button" aria-pressed="false" title="Battery saver: a smaller picture at 30 frames a second, no reverb room, simpler hats. Cooler and kinder to a phone.">eco</button>
+        <button id="clean" type="button" aria-pressed="false" title="Fullscreen, nothing but the picture (c)">clean</button>
+        <button id="play" type="button">stop</button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="src/main.js?v=0.1.0"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050000">
+  <title>DreVelopDrop Studio</title>
+  <meta name="description" content="The DreVelopDrop Studio: play back, trim and edit the performances and videos you recorded. Everything stays in your browser.">
+  <link rel="stylesheet" href="css/style.css?v=0.1.0">
+  <link rel="stylesheet" href="css/studio.css?v=0.1.0">
+</head>
+<body class="studio lit">
+  <header id="sbar">
+    <a class="btnlink" href="index.html" title="Back to the instrument">← instrument</a>
+    <b>DreVelopDrop <i>//</i> Studio</b>
+    <span class="grow"></span>
+    <span id="usage" title="How much of this browser's storage the Studio uses"></span>
+    <button id="keep" type="button" title="Ask the browser not to clear your recordings when it runs low on space">keep my data</button>
+    <button id="import" type="button" title="Add a performance (.sqz) or a video (.webm, .mp4) from your computer">import…</button>
+    <input id="importfile" type="file" accept=".sqz,.json,.webm,.mp4,.mkv,.wav,.mp3,application/json,video/*,audio/*" multiple hidden>
+  </header>
+
+  <div id="shell">
+    <aside id="lib" aria-label="Your takes">
+      <p class="fine" id="libhint">Takes you record in the instrument land here.</p>
+      <ul id="takes"></ul>
+    </aside>
+
+    <main id="work">
+      <section id="empty">
+        <h2>Nothing open</h2>
+        <p>Record a performance or a video in the instrument (● rec, with <b>Studio</b> ticked), then open it here. You can also drop a file on this page.</p>
+        <p class="fine">Performances (.sqz) are edited note by note, replayed with the instrument's own sound and picture, and rendered to WAV faster than real time. Videos are played, trimmed and saved as new takes. Nothing is uploaded: it all lives in this browser.</p>
+      </section>
+
+      <section id="perfview" hidden>
+        <div class="titlebar">
+          <input id="pname" type="text" aria-label="Name" spellcheck="false">
+          <span id="pmeta" class="fine"></span>
+        </div>
+        <div id="stagewrap">
+          <canvas id="pic" role="img" aria-label="The performance, replayed"></canvas>
+          <div id="gate"><button id="gobtn" type="button">▶ play</button></div>
+        </div>
+        <div class="transport">
+          <button id="tplay" type="button" aria-label="Play">▶</button>
+          <input id="tseek" type="range" min="0" max="100" step="0.01" value="0" aria-label="Position">
+          <span id="ttime">00:00 / 00:00</span>
+          <label class="tick"><input id="follow" type="checkbox" checked> follow</label>
+        </div>
+        <div class="toolrow" id="edit1">
+          <span class="grp"><button id="undo" type="button" title="Undo (Ctrl+Z)">↶ undo</button><button id="redo" type="button" title="Redo (Ctrl+Y)">↷ redo</button></span>
+          <span class="grp"><button id="del" type="button" title="Delete the selection (Delete)">delete</button><button id="dup" type="button" title="Copy the selection one bar later">duplicate</button></span>
+          <span class="grp"><select id="qgrid" aria-label="Grid"><option value="4">1/4 beat</option><option value="8">1/8</option><option value="16" selected>1/16</option></select><button id="quant" type="button" title="Snap the selected notes and hits (or all of them) to the grid (Q)">quantise</button><label class="tick"><input id="snap" type="checkbox" checked> snap moves</label></span>
+          <span class="grp"><button id="tm12" type="button">−12</button><button id="tm1" type="button">−1</button><button id="tp1" type="button">+1</button><button id="tp12" type="button">+12</button><span class="fine">semitones</span></span>
+          <span class="grp"><button id="vdn" type="button">softer</button><button id="vup" type="button">harder</button></span>
+        </div>
+        <div class="toolrow" id="edit2">
+          <span class="grp"><button id="crop" type="button" title="Keep only the time range of the selection">crop to selection</button><button id="cutr" type="button" title="Remove the time range of the selection and close the gap">cut range</button></span>
+          <span class="grp"><select id="addkind" aria-label="Add at the playhead"><option value="scene">picture…</option><option value="light">light…</option></select><select id="addval" aria-label="Which"></select><button id="addbtn" type="button" title="Insert a change at the playhead">add at playhead</button></span>
+          <span class="grp"><button id="tfit" type="button">fit</button><button id="tzo" type="button">−</button><button id="tzi" type="button">+</button></span>
+        </div>
+        <canvas id="tl" aria-label="Timeline of the performance"></canvas>
+        <div id="readout" class="fine" aria-live="polite">Click an event to see it. Drag to select a range. Delete removes. Ctrl + wheel zooms.</div>
+        <div class="toolrow" id="edit3">
+          <span class="grp"><button id="save" type="button" title="Keep these edits (replaces this take)">save</button><button id="saveas" type="button" title="Keep these edits as a new take">save as copy</button></span>
+          <span class="grp"><button id="export" type="button">download .sqz</button><button id="wav" type="button" title="Render the sound to a 24-bit WAV, faster than real time. No sound is played.">render WAV</button><button id="vid" type="button" title="Replay it and record the picture and sound as a WebM (in real time)">record as video</button></span>
+          <span class="grp"><button id="delete" type="button" class="danger">delete take</button></span>
+          <span id="pstatus" class="fine"></span>
+        </div>
+        <label class="notes"><span>Notes</span><textarea id="pnotes" rows="2" placeholder="What is this take?"></textarea></label>
+      </section>
+
+      <section id="videoview" hidden>
+        <div class="titlebar">
+          <input id="vname" type="text" aria-label="Name" spellcheck="false">
+          <span id="vmeta" class="fine"></span>
+        </div>
+        <div class="vwrap"><video id="vid2" controls playsinline preload="metadata"></video></div>
+        <div class="trim" aria-label="Trim">
+          <div class="trimbar"><div id="trimsel"></div><input id="tin" type="range" min="0" max="100" step="0.01" value="0" aria-label="Start"><input id="tout" type="range" min="0" max="100" step="0.01" value="100" aria-label="End"></div>
+          <div class="toolrow">
+            <span class="grp"><button id="setin" type="button">set start here</button><button id="setout" type="button">set end here</button><span id="trimtxt" class="fine"></span></span>
+            <span class="grp"><button id="previewtrim" type="button">preview</button><button id="savetrim" type="button" title="Records the kept part again, in real time, as a new take">save trimmed copy</button></span>
+            <span class="grp"><button id="frame" type="button">save this frame (PNG)</button><button id="vdl" type="button">download</button><button id="vdelete" type="button" class="danger">delete take</button></span>
+            <span id="vstatus" class="fine"></span>
+          </div>
+        </div>
+        <p class="fine" id="vpair"></p>
+        <label class="notes"><span>Notes</span><textarea id="vnotes" rows="2" placeholder="What is this take?"></textarea></label>
+      </section>
+    </main>
+  </div>
+
+  <div id="dropzone" hidden><p>Drop a performance or a video</p></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="src/studio/main.js?v=0.1.0"></script>
+</body>
+</html>
