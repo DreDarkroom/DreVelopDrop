@@ -136,6 +136,7 @@ export function createVisual({ audio: A }) {
   /* ---- the squeegee ---- */
   /** One squeegee stroke segment. `size` (0.15 to 1.5, default 1) scales the blade: a pen's pressure makes it fine. */
   V.wipe = (cx, cy, px, py, size) => {
+    if (!W || !H) return;                                     // no size yet (a hidden tab): nothing to wipe, and a zero-size canvas cannot be drawn
     const k = typeof size === 'number' && isFinite(size) ? clamp(size, 0.15, 1.5) : 1;
     const x = cx * DPR, y = cy * DPR, ox = px * DPR, oy = py * DPR, dx = x - ox, dy = y - oy;
     if (!dx && !dy) return;
