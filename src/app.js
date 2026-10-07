@@ -20,6 +20,7 @@ import { buildMidi } from './ui/midiui.js';
 import { buildVfx } from './ui/vfx.js';
 import { buildSettings } from './ui/settings.js';
 import { buildDev } from './dev/devtools.js';
+import { startFeedback, startCounter } from './ui/feedback.js';
 
 export function start() {
   const qs = new URLSearchParams(location.search);
@@ -96,6 +97,8 @@ export function start() {
   buildSettings(app);
   buildDev(app);
   buildInput(app);
+  startCounter();                                                                     // off until config.counterCode is filled in
+  startFeedback({ mode: qs.get('feedback') === 'test' ? 'test' : qs.get('feedback') === '1' ? 'force' : 'live' });
   app.setLight(S.light);
   $('#dre').addEventListener('click', app.toggleDarkroom);
   $('#switch').addEventListener('click', () => {

@@ -1,1 +1,1 @@
-{ "name": "drevelopdrop", "private": true, "type": "module", "description": "A small wet instrument and its Studio.", "scripts": { "test": "node --test tests/logic.test.js tests/music.test.js tests/midi.test.js tests/studio.test.js", "serve": "python -m http.server 5173" } }
+{ "name": "drevelopdrop", "private": true, "type": "module", "description": "A small wet instrument and its Studio.", "scripts": { "test": "node --test tests/logic.test.js tests/music.test.js tests/midi.test.js tests/studio.test.js tests/feedback.test.js", "serve": "python -m http.server 5173" } }

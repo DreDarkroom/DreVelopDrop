@@ -3,7 +3,7 @@
 ## Name
 
 The project is **DreVelopDrop** (a working title): capital D, capital V, one word. Never "Drevelopdrop" or "Dre Velop Drop".
-It grew from DevelopDrop (a separate repository, which stays as it is).
+It grew from DevelopDrop (a separate repository) and is its **experimental parallel version**: new ideas are tried here first and may change or break; DevelopDrop stays the steady one (bug fixes and measurement only). The feedback card (`src/ui/feedback.js`) and DevelopDrop's `js/feedback.js` share one design and one set of tests: change them together.
 
 - Repo: `DreDarkroom/DreVelopDrop`. `src/config.js` holds the name, the slug (`drevelopdrop`, the file and storage prefix) and the version.
 - The DJ aliases DreDarkroom, SafeLight and SquidgySqueegee are separate from the project name and keep their own casing.
